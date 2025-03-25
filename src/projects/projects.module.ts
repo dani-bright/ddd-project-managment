@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { AddUserToProjectUseCase } from './application/use-cases/add-user-to-project';
+import { AddMembersToProjectUseCase } from './application/use-cases/add-members-to-project';
 import { SequelizeProjectRepository } from './infrastructure/sequelize/projects.repository';
 import { ProjectsController } from './infrastructure/projects.controller';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ProjectModel } from './infrastructure/sequelize/project.model';
-import { UsersModule } from 'src/users/users.module';
+import { UsersModule } from '../users/users.module';
 import { ListProjectMemberUseCase } from './application/use-cases/list-project-members';
 import { RemoveMemberFromProjectUseCase } from './application/use-cases/remove-member-from-project';
 
@@ -14,8 +14,8 @@ import { RemoveMemberFromProjectUseCase } from './application/use-cases/remove-m
   providers: [
     SequelizeProjectRepository,
     {
-      provide: AddUserToProjectUseCase,
-      useFactory: (repo: SequelizeProjectRepository) => new AddUserToProjectUseCase(repo),
+      provide: AddMembersToProjectUseCase,
+      useFactory: (repo: SequelizeProjectRepository) => new AddMembersToProjectUseCase(repo),
       inject: [SequelizeProjectRepository],
     },
     {
@@ -30,7 +30,7 @@ import { RemoveMemberFromProjectUseCase } from './application/use-cases/remove-m
     },
   ],
   exports: [
-    AddUserToProjectUseCase,
+    AddMembersToProjectUseCase,
     ListProjectMemberUseCase,
     RemoveMemberFromProjectUseCase,
     SequelizeProjectRepository,

@@ -1,7 +1,7 @@
 import { ArrayNotEmpty, IsArray, IsInt } from 'class-validator';
 import { Type } from 'class-transformer';
 
-export class UpdateProjectDto {
+export class AddMembersDto {
   @IsArray()
   @ArrayNotEmpty()
   @IsInt({ each: true })

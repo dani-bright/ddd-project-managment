@@ -1,7 +1,7 @@
 import { CreationOptional } from 'sequelize';
 import { Table, Column, Model, DataType, BelongsToMany } from 'sequelize-typescript';
-import { ProjectModel } from 'src/projects/infrastructure/sequelize/project.model';
-import { ProjectsMembers } from 'src/projects/infrastructure/sequelize/projects-members.model';
+import { ProjectModel } from '../../../projects/infrastructure/sequelize/project.model';
+import { ProjectsMembers } from '../../../projects/infrastructure/sequelize/projects-members.model';
 
 @Table({ tableName: 'users', timestamps: false })
 export class UserModel extends Model {

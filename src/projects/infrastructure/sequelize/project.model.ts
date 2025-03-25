@@ -1,5 +1,5 @@
 import { Table, Column, Model, DataType, BelongsToMany, ForeignKey } from 'sequelize-typescript';
-import { UserModel } from 'src/users/infrastructure/sequelize/users.model';
+import { UserModel } from '../../../users/infrastructure/sequelize/users.model';
 import { ProjectsMembers } from './projects-members.model';
 import { CreationOptional } from 'sequelize';
 

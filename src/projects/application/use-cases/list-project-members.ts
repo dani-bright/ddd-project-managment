@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { ProjectRepository } from '../../domain/project.repository';
-import { Project } from 'src/projects/domain/projects.entity';
+import { Project } from '../../domain/projects.entity';
 
 export class ListProjectMemberUseCase {
   constructor(private readonly projectRepository: ProjectRepository) {}

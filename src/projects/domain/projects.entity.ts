@@ -1,4 +1,4 @@
-import { User } from 'src/users/domain/user.entity';
+import { User } from '../../users/domain/user.entity';
 
 export class Project {
   constructor(

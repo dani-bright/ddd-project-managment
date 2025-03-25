@@ -1,5 +1,5 @@
 import { Table, Column, Model, DataType, BelongsToMany, ForeignKey } from 'sequelize-typescript';
-import { UserModel } from 'src/users/infrastructure/sequelize/users.model';
+import { UserModel } from '../../../users/infrastructure/sequelize/users.model';
 import { ProjectModel } from './project.model';
 import { CreationOptional } from 'sequelize';
 
@@ -9,12 +9,20 @@ import { CreationOptional } from 'sequelize';
 })
 export class ProjectsMembers extends Model {
   @ForeignKey(() => ProjectModel)
-  @Column
-  project_id: number;
+  @Column({
+    type: 'text',
+    allowNull: false,
+    field: 'project_id',
+  })
+  projectId: number;
 
   @ForeignKey(() => UserModel)
-  @Column
-  user_id: number;
+  @Column({
+    type: 'text',
+    allowNull: false,
+    field: 'user_id',
+  })
+  userId: number;
 
   @Column({
     type: 'datetime',
