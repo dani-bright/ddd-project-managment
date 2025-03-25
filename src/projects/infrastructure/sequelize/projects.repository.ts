@@ -5,6 +5,8 @@ import { Project } from '../../domain/projects.entity';
 import { ProjectModel } from './project.model';
 import { UserModel } from 'src/users/infrastructure/sequelize/users.model';
 import { Op } from 'sequelize';
+import { RemoveMemberDto } from 'src/projects/dto/remove-member.dto';
+import { NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class SequelizeProjectRepository implements ProjectRepository {
@@ -15,6 +17,14 @@ export class SequelizeProjectRepository implements ProjectRepository {
     @InjectModel(UserModel)
     private readonly userModel: typeof UserModel,
   ) {}
+
+  async removeMember({ userId, projectId }: RemoveMemberDto): Promise<void> {
+    const project = await this.projectModel.findByPk(projectId);
+    if (!project) {
+      throw new NotFoundException(`Project with ID ${projectId} not found`);
+    }
+    project.$remove('user', userId);
+  }
 
   async listMembers(id: number): Promise<Project | null> {
     const found = await this.projectModel.findOne({
@@ -44,13 +54,13 @@ export class SequelizeProjectRepository implements ProjectRepository {
     });
     if (users.length !== userIds.length) {
       //TODO move checks in the main repository
-      throw new Error(`batch addition failed and user couldn't be found`);
+      throw new NotFoundException(`batch addition failed and user couldn't be found`);
     }
 
     const project = await this.projectModel.findByPk(projectId);
     if (!project) {
       //TODO move checks in the main repository
-      throw new Error(`Project with ID ${projectId} not found`);
+      throw new NotFoundException(`Project with ID ${projectId} not found`);
     }
 
     await project.$add('user', userIds);

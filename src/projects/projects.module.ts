@@ -6,6 +6,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { ProjectModel } from './infrastructure/sequelize/project.model';
 import { UsersModule } from 'src/users/users.module';
 import { ListProjectMemberUseCase } from './application/use-cases/list-project-members';
+import { RemoveMemberFromProjectUseCase } from './application/use-cases/remove-member-from-project';
 
 @Module({
   imports: [SequelizeModule.forFeature([ProjectModel]), UsersModule],
@@ -22,7 +23,17 @@ import { ListProjectMemberUseCase } from './application/use-cases/list-project-m
       useFactory: (repo: SequelizeProjectRepository) => new ListProjectMemberUseCase(repo),
       inject: [SequelizeProjectRepository],
     },
+    {
+      provide: RemoveMemberFromProjectUseCase,
+      useFactory: (repo: SequelizeProjectRepository) => new RemoveMemberFromProjectUseCase(repo),
+      inject: [SequelizeProjectRepository],
+    },
   ],
-  exports: [AddUserToProjectUseCase, ListProjectMemberUseCase, SequelizeProjectRepository], // Make them available for other modules
+  exports: [
+    AddUserToProjectUseCase,
+    ListProjectMemberUseCase,
+    RemoveMemberFromProjectUseCase,
+    SequelizeProjectRepository,
+  ],
 })
 export class ProjectsModule {}
