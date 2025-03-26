@@ -80,8 +80,12 @@ describe('ProjectsController (E2E)', () => {
         .get(`/projects/${project1.id}/members`)
         .expect(200)
         .expect([
-          { id: user1.id, name: `${user1.firstName} ${user1.lastName}` },
-          { id: user2.id, name: `${user2.firstName} ${user2.lastName}` },
+          { id: user1.id, name: `${user1.firstName} ${user1.lastName}`, projects: [project1.name] },
+          {
+            id: user2.id,
+            name: `${user2.firstName} ${user2.lastName}`,
+            projects: [project1.name, project3.name],
+          },
         ]);
     });
 

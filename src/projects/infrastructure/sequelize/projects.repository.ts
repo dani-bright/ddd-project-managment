@@ -48,15 +48,22 @@ export class SequelizeProjectRepository implements ProjectRepository {
   async listMembers(id: number): Promise<Project | null> {
     const project = await this.projectModel.findOne({
       where: { id },
-      include: [
-        {
-          model: UserModel,
-        },
-      ],
+      include: [UserModel],
     });
     if (!project) return null;
 
-    const users = extractUser(project.dataValues.users);
+    const usersWithProjects: UserModel[] = [];
+    for (const user of project.dataValues.users) {
+      const userProjects = await this.userModel.findByPk(user.id, {
+        include: [ProjectModel],
+      });
+
+      if (userProjects) {
+        usersWithProjects.push(userProjects);
+      }
+    }
+
+    const users = extractUser(usersWithProjects);
     return new Project(project.id, project.name, users);
   }
 
@@ -88,6 +95,6 @@ export class SequelizeProjectRepository implements ProjectRepository {
 
     await project.$add('user', userIds);
 
-    return extractUser(users);
+    return extractUser(users, false);
   }
 }
