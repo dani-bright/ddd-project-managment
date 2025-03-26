@@ -26,6 +26,9 @@ describe('ProjectsController (E2E)', () => {
   const project1 = { id: 1, name: 'WIMI' };
   const project2 = { id: 2, name: 'EDC' };
   const project3 = { id: 3, name: 'WTN' };
+  const project4 = { id: 4, name: 'BEYABLE' };
+  const project5 = { id: 5, name: 'VE' };
+  const project6 = { id: 6, name: 'SMART' };
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -68,25 +71,40 @@ describe('ProjectsController (E2E)', () => {
 
   describe('listMembersUseCase', () => {
     it('should list project members', async () => {
-      await ProjectModel.bulkCreate([project1, project2, project3]);
+      await ProjectModel.bulkCreate([project1, project2, project3, project4, project5, project6]);
       await UserModel.bulkCreate([user1, user2, user3, user4, user5, user6, user7]);
       await ProjectsMembers.bulkCreate([
         { projectId: project1.id, userId: user1.id },
         { projectId: project1.id, userId: user2.id },
+        { projectId: project2.id, userId: user2.id },
         { projectId: project3.id, userId: user2.id },
+        { projectId: project4.id, userId: user2.id },
+        { projectId: project5.id, userId: user2.id },
+        { projectId: project6.id, userId: user2.id },
       ]);
 
-      return request(app.getHttpServer())
-        .get(`/projects/${project1.id}/members`)
-        .expect(200)
-        .expect([
-          { id: user1.id, name: `${user1.firstName} ${user1.lastName}`, projects: [project1.name] },
-          {
-            id: user2.id,
-            name: `${user2.firstName} ${user2.lastName}`,
-            projects: [project1.name, project3.name],
-          },
-        ]);
+      const response = await request(app.getHttpServer()).get(`/projects/${project1.id}/members`);
+      expect(response.status).toStrictEqual(200);
+
+      expect(response.body).toEqual([
+        {
+          id: user1.id,
+          name: `${user1.firstName} ${user1.lastName}`,
+          projects: expect.arrayContaining([project1.name]),
+        },
+        {
+          id: user2.id,
+          name: `${user2.firstName} ${user2.lastName}`,
+          projects: expect.arrayContaining([
+            project1.name,
+            project3.name,
+            project3.name,
+            project4.name,
+            project5.name,
+            project6.name,
+          ]),
+        },
+      ]);
     });
 
     it('should throw if project does not exist', async () => {
