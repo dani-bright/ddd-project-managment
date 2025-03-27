@@ -122,25 +122,31 @@ export class SequelizeGroupRepository implements GroupRepository {
     return groupIds;
   }
 
-  async getAllSubGroups(groupId: number): Promise<GroupModel[]> {
-    const group = await GroupModel.findOne({
-      where: { id: groupId },
-      include: [
-        {
-          model: GroupModel,
-          as: 'subGroups',
-          through: { attributes: [] },
-        },
-      ],
-    });
-    if (!group || !group.dataValues.subGroups.length) {
-      return [];
+  async getAllSubGroups(groupId: number): Promise<number[]> {
+    const allRelations = await GroupHierarchyModel.findAll();
+
+    const parentMap = new Map<number, number[]>();
+    for (const relation of allRelations) {
+      if (!parentMap.has(relation.dataValues.parentGroupId)) {
+        parentMap.set(relation.dataValues.parentGroupId, []);
+      }
+      const mapKey = parentMap.get(relation.dataValues.parentGroupId);
+      if (mapKey) mapKey.push(relation.dataValues.childGroupId);
     }
 
-    const nestedSubGroups = await Promise.all(
-      group.dataValues.subGroups.map((subGroup) => this.getAllSubGroups(subGroup.id)),
-    );
+    const getNestedGroups = (parentId: number): number[] => {
+      if (!parentMap.has(parentId)) return [];
+      const childIds = parentMap.get(parentId)!;
 
-    return [...group.dataValues.subGroups, ...nestedSubGroups.flat()];
+      let nestedGroupsIds: number[] = [...childIds];
+
+      childIds.forEach((childId) => {
+        nestedGroupsIds.push(...getNestedGroups(childId));
+      });
+
+      return nestedGroupsIds;
+    };
+
+    return getNestedGroups(groupId);
   }
 }
