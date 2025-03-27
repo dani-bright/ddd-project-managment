@@ -1,7 +1,8 @@
 import { Table, Column, Model, DataType, BelongsToMany, ForeignKey } from 'sequelize-typescript';
 import { UserModel } from '../../../users/infrastructure/sequelize/users.model';
-import { ProjectsMembers } from './projects-members.model';
+import { ProjectGroupsModel, ProjectsMembersModel } from './projects-members.model';
 import { CreationOptional } from 'sequelize';
+import { GroupModel } from '../../../groups/infrastructure/sequelize/groups.model';
 
 @Table({ tableName: 'projects', timestamps: false })
 export class ProjectModel extends Model {
@@ -18,8 +19,11 @@ export class ProjectModel extends Model {
   })
   name: string;
 
-  @BelongsToMany(() => UserModel, () => ProjectsMembers)
+  @BelongsToMany(() => UserModel, () => ProjectsMembersModel)
   users: UserModel[];
+
+  @BelongsToMany(() => GroupModel, () => ProjectGroupsModel)
+  groups: GroupModel[];
 
   @Column({
     type: 'datetime',

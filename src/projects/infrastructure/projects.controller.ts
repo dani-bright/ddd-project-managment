@@ -1,8 +1,10 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
-import { AddMembersDto } from '../dto/add-members.dto';
+import { AddUsersDto } from '../../shared/dto/add-users.dto';
 import { AddMembersToProjectUseCase } from '../application/use-cases/add-members-to-project';
 import { ListProjectMemberUseCase } from '../application/use-cases/list-project-members';
 import { RemoveMemberFromProjectUseCase } from '../application/use-cases/remove-member-from-project';
+import { AddGroupsDto } from '../../shared/dto/add-groups.dto';
+import { AddGroupsToProjectUseCase } from '../application/use-cases/add-groups-to-project';
 
 @Controller('projects')
 export class ProjectsController {
@@ -10,6 +12,7 @@ export class ProjectsController {
     private readonly addMemberToProject: AddMembersToProjectUseCase,
     private readonly listProjectMembers: ListProjectMemberUseCase,
     private readonly removeMemberFromProject: RemoveMemberFromProjectUseCase,
+    private readonly addGroupsToProject: AddGroupsToProjectUseCase,
   ) {}
 
   @Get(':id/members')
@@ -17,12 +20,17 @@ export class ProjectsController {
     return (await this.listProjectMembers.execute(projectId)).users;
   }
 
-  @Post(':id/members')
-  async addMembers(
-    @Param('id', ParseIntPipe) projectId: number,
-    @Body() { userIds }: AddMembersDto,
-  ) {
+  @Post(':id/users-members')
+  async addUsers(@Param('id', ParseIntPipe) projectId: number, @Body() { userIds }: AddUsersDto) {
     return this.addMemberToProject.execute(projectId, userIds);
+  }
+
+  @Post(':id/groups-members')
+  async addGroups(
+    @Param('id', ParseIntPipe) projectId: number,
+    @Body() { groupIds }: AddGroupsDto,
+  ) {
+    return this.addGroupsToProject.execute(projectId, groupIds);
   }
 
   @Delete(':projectId/members/:userId')

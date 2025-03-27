@@ -1,21 +1,20 @@
 import { Table, Column, Model, DataType, BelongsToMany, ForeignKey } from 'sequelize-typescript';
 import { UserModel } from '../../../users/infrastructure/sequelize/users.model';
-import { ProjectModel } from './project.model';
+import { GroupModel } from './groups.model';
 import { CreationOptional } from 'sequelize';
-import { GroupModel } from '../../../groups/infrastructure/sequelize/groups.model';
 
 @Table({
-  tableName: 'projects_members',
+  tableName: 'groups_members',
   timestamps: false,
 })
-export class ProjectsMembersModel extends Model {
-  @ForeignKey(() => ProjectModel)
+export class GroupsMembersModel extends Model {
+  @ForeignKey(() => GroupModel)
   @Column({
     type: 'text',
     allowNull: false,
-    field: 'project_id',
+    field: 'group_id',
   })
-  projectId: number;
+  groupId: number;
 
   @ForeignKey(() => UserModel)
   @Column({
@@ -34,13 +33,13 @@ export class ProjectsMembersModel extends Model {
   declare createdAt: CreationOptional<Date>;
 }
 
-@Table({ tableName: 'project_groups', timestamps: false })
-export class ProjectGroupsModel extends Model {
-  @ForeignKey(() => ProjectModel)
+@Table({ tableName: 'group_hierarchy', timestamps: false })
+export class GroupHierarchyModel extends Model {
+  @ForeignKey(() => GroupModel)
   @Column
-  projectId: number;
+  parentGroupId: number;
 
   @ForeignKey(() => GroupModel)
   @Column
-  groupId: number;
+  childGroupId: number;
 }

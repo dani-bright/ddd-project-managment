@@ -7,9 +7,11 @@ import { ProjectModel } from './infrastructure/sequelize/project.model';
 import { UsersModule } from '../users/users.module';
 import { ListProjectMemberUseCase } from './application/use-cases/list-project-members';
 import { RemoveMemberFromProjectUseCase } from './application/use-cases/remove-member-from-project';
+import { GroupsModule } from '../groups/groups.module';
+import { AddGroupsToProjectUseCase } from './application/use-cases/add-groups-to-project';
 
 @Module({
-  imports: [SequelizeModule.forFeature([ProjectModel]), UsersModule],
+  imports: [SequelizeModule.forFeature([ProjectModel]), UsersModule, GroupsModule],
   controllers: [ProjectsController],
   providers: [
     SequelizeProjectRepository,
@@ -28,11 +30,17 @@ import { RemoveMemberFromProjectUseCase } from './application/use-cases/remove-m
       useFactory: (repo: SequelizeProjectRepository) => new RemoveMemberFromProjectUseCase(repo),
       inject: [SequelizeProjectRepository],
     },
+    {
+      provide: AddGroupsToProjectUseCase,
+      useFactory: (repo: SequelizeProjectRepository) => new AddGroupsToProjectUseCase(repo),
+      inject: [SequelizeProjectRepository],
+    },
   ],
   exports: [
     AddMembersToProjectUseCase,
     ListProjectMemberUseCase,
     RemoveMemberFromProjectUseCase,
+    AddGroupsToProjectUseCase,
     SequelizeProjectRepository,
   ],
 })

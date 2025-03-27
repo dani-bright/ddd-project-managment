@@ -1,14 +1,9 @@
-import { RemoveMemberDto } from '../dto/remove-member.dto';
+import { RemoveUserDto } from '../dto/remove-user.dto';
 import { Project } from './projects.entity';
+import { GroupProjectRepository } from '../../shared/domain/groups-project.repository';
 
-export interface AddedMember {
-  id: number;
-  name: string;
-}
-
-export interface ProjectRepository {
+export interface ProjectRepository extends GroupProjectRepository {
   get(id: number): Promise<Project | null>;
   listMembers(id: number): Promise<Project | null>;
-  addMembers(projectId: number, userIds: number[]): Promise<AddedMember[]>;
-  removeMember(data: RemoveMemberDto): Promise<void>;
+  removeUsers(data: RemoveUserDto): Promise<void>;
 }
